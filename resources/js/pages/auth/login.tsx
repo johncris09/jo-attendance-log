@@ -49,11 +49,11 @@ export default function Login({ canResetPassword, canRegister }: Props) {
                 {/* Brand */}
                 <div className="relative z-10">
                     <div className="mb-12 flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg">
+                        <div className="flex h-15 w-15 items-center justify-center rounded-lg">
                             <img
                                 src={logo}
                                 alt="Oroquieta Logo"
-                                className="size-10 rounded-md object-cover"
+                                className="size-15 rounded-md object-cover"
                             />
                         </div>
                         <div>
