@@ -7,6 +7,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem } from '@/types';
@@ -49,6 +50,40 @@ const monthOptions = [
     { value: 11, label: 'November' },
     { value: 12, label: 'December' },
 ];
+
+function AttendanceTableSkeleton() {
+    return (
+        <div className="overflow-x-auto">
+            <table className="w-full min-w-230 border-collapse text-sm">
+                <thead>
+                    <tr className="border-b text-center">
+                        <th className="px-3 py-2 font-medium">Day</th>
+                        <th className="px-3 py-2 font-medium">00:00 - 07:29</th>
+                        <th className="px-3 py-2 font-medium">07:30 - 09:59</th>
+                        <th className="px-3 py-2 font-medium">10:00 - 12:29</th>
+                        <th className="px-3 py-2 font-medium">12:30 - 14:59</th>
+                        <th className="px-3 py-2 font-medium">15:00 - 17:29</th>
+                        <th className="px-3 py-2 font-medium">17:30 - 23:59</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {Array.from({ length: 15 }, (_, rowIndex) => (
+                        <tr key={rowIndex} className="border-b last:border-0 text-center">
+                            <td className="px-3 py-2">
+                                <Skeleton className="mx-auto h-4 w-8" />
+                            </td>
+                            {Array.from({ length: 6 }, (_, colIndex) => (
+                                <td key={colIndex} className="px-3 py-2">
+                                    <Skeleton className="mx-auto h-4 w-24" />
+                                </td>
+                            ))}
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    );
+}
 
 export default function Dashboard() {
     const today = new Date();
@@ -152,9 +187,7 @@ export default function Dashboard() {
                         </div>
                     </div>
 
-                    {isLoading && (
-                        <p className="text-sm text-muted-foreground">Loading attendance logs...</p>
-                    )}
+                    {isLoading && <AttendanceTableSkeleton />}
 
                     {!isLoading && error && (
                         <p className="text-sm text-destructive">{error}</p>
