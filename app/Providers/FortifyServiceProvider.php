@@ -6,7 +6,6 @@ use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -31,7 +30,7 @@ class FortifyServiceProvider extends ServiceProvider
     {
         // $this->configureActions();
         // $this->configureViews();
-        // $this->configureRateLimiting();
+        $this->configureRateLimiting();
 
 
 
@@ -42,8 +41,9 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::authenticateUsing(function ($request) {
 
             $employee = \App\Models\Employee::where('joidnum', $request->joidnum)->first();
+            $defaultPassword = env('AUTH_DEFAULT_PASSWORD', '1234');
 
-            if ($employee && Hash::check($request->password, $employee->password)) {
+            if ($employee && hash_equals((string) $defaultPassword, (string) $request->password)) {
                 return $employee;
             }
 
