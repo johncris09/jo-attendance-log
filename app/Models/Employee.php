@@ -10,6 +10,12 @@ class Employee extends Authenticatable
 
     protected $table = 'joc';
 
+    protected $primaryKey = 'JOIDNUM';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -17,7 +23,7 @@ class Employee extends Authenticatable
      */
 
     protected $fillable = [
-        'joidnum',
+        'JOIDNUM',
         'password',
     ];
 
