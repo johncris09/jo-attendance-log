@@ -40,7 +40,7 @@ class FortifyServiceProvider extends ServiceProvider
 
         Fortify::authenticateUsing(function ($request) {
 
-            $employee = \App\Models\Employee::where('joidnum', $request->joidnum)->first();
+            $employee = \App\Models\Employee::where('JOIDNUM', $request->joidnum)->first();
             $defaultPassword = env('AUTH_DEFAULT_PASSWORD', '1234');
 
             if ($employee && hash_equals((string) $defaultPassword, (string) $request->password)) {
