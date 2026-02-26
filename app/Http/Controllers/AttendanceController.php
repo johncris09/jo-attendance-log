@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 
 class AttendanceController extends Controller
 {
@@ -35,7 +34,8 @@ class AttendanceController extends Controller
             ], 401);
         }
 
-        $joidnum = (string) $user->getAuthIdentifier();
+        $joidnum = str_replace('-', '', (string) $user->getAuthIdentifier());
+
 
         $connection = DB::connection('mysql');
         $table = 'attendance';
@@ -44,26 +44,41 @@ class AttendanceController extends Controller
         //     'message' => 'This endpoint is under development.',
         // ], 503);
 
-        if (! Schema::connection('mysql')->hasTable($table)) {
+        $tableExists = ! empty(
+            $connection->select(
+                'SELECT 1 FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = ? LIMIT 1',
+                [$table]
+            )
+        );
+
+        if (! $tableExists) {
             return response()->json([
                 'message' => 'Attendance table not found on mysql connection.',
             ], 404);
         }
 
-        $columns = Schema::connection('mysql')->getColumnListing($table);
+        $columns = collect($connection->select("SHOW COLUMNS FROM `{$table}`"))
+            ->map(fn(object $column) => $column->Field ?? null)
+            ->filter(fn(?string $columnName) => is_string($columnName) && $columnName !== '')
+            ->values()
+            ->all();
 
         $joidnumColumn = collect(['id_number','JOIDNUM', 'joidnum', 'employee_id', 'EmployeeID'])->first(
             fn(string $column) => in_array($column, $columns, true)
         );
 
 
-        $dateTimeColumn = collect(['timestamp','log_datetime', 'datetime', 'date_time', 'logged_at', 'attendance_datetime', 'time_in', 'created_at'])->first(
+        $bioDateColumn = collect(['bio_date', 'BIO_DATE', 'BioDate', 'date'])->first(
             fn(string $column) => in_array($column, $columns, true)
         );
 
-        if (! $joidnumColumn || ! $dateTimeColumn) {
+        $bioTimeColumn = collect(['bio_time', 'BIO_TIME', 'BioTime', 'time'])->first(
+            fn(string $column) => in_array($column, $columns, true)
+        );
+
+        if (! $joidnumColumn || ! $bioDateColumn || ! $bioTimeColumn) {
             return response()->json([
-                'message' => 'Unable to detect attendance JOIDNUM or datetime columns.',
+                'message' => 'Unable to detect attendance JOIDNUM, bio_date, or bio_time columns.',
                 'detected_columns' => $columns,
             ], 422);
         }
@@ -72,20 +87,23 @@ class AttendanceController extends Controller
         $end = (clone $start)->endOfMonth()->endOfDay();
         $daysInMonth = $start->daysInMonth;
 
-        $wrappedDateTimeColumn = '`' . str_replace('`', '``', $dateTimeColumn) . '`';
+        $wrappedBioDateColumn = '`' . str_replace('`', '``', $bioDateColumn) . '`';
+        $wrappedBioTimeColumn = '`' . str_replace('`', '``', $bioTimeColumn) . '`';
+
+
 
         $rows = $connection->table($table)
-            ->selectRaw("DAY({$wrappedDateTimeColumn}) as day")
-            ->selectRaw("GROUP_CONCAT(CASE WHEN TIME({$wrappedDateTimeColumn}) BETWEEN '00:00:00' AND '07:29:59' THEN DATE_FORMAT({$wrappedDateTimeColumn}, '%H:%i:%s') END ORDER BY {$wrappedDateTimeColumn} SEPARATOR ', ') as bracket_1")
-            ->selectRaw("GROUP_CONCAT(CASE WHEN TIME({$wrappedDateTimeColumn}) BETWEEN '07:30:00' AND '09:59:59' THEN DATE_FORMAT({$wrappedDateTimeColumn}, '%H:%i:%s') END ORDER BY {$wrappedDateTimeColumn} SEPARATOR ', ') as bracket_2")
-            ->selectRaw("GROUP_CONCAT(CASE WHEN TIME({$wrappedDateTimeColumn}) BETWEEN '10:00:00' AND '12:29:59' THEN DATE_FORMAT({$wrappedDateTimeColumn}, '%H:%i:%s') END ORDER BY {$wrappedDateTimeColumn} SEPARATOR ', ') as bracket_3")
-            ->selectRaw("GROUP_CONCAT(CASE WHEN TIME({$wrappedDateTimeColumn}) BETWEEN '12:30:00' AND '14:59:59' THEN DATE_FORMAT({$wrappedDateTimeColumn}, '%H:%i:%s') END ORDER BY {$wrappedDateTimeColumn} SEPARATOR ', ') as bracket_4")
-            ->selectRaw("GROUP_CONCAT(CASE WHEN TIME({$wrappedDateTimeColumn}) BETWEEN '15:00:00' AND '17:29:59' THEN DATE_FORMAT({$wrappedDateTimeColumn}, '%H:%i:%s') END ORDER BY {$wrappedDateTimeColumn} SEPARATOR ', ') as bracket_5")
-            ->selectRaw("GROUP_CONCAT(CASE WHEN TIME({$wrappedDateTimeColumn}) BETWEEN '17:30:00' AND '23:59:59' THEN DATE_FORMAT({$wrappedDateTimeColumn}, '%H:%i:%s') END ORDER BY {$wrappedDateTimeColumn} SEPARATOR ', ') as bracket_6")
+            ->selectRaw("DAY({$wrappedBioDateColumn}) as day")
+            ->selectRaw("GROUP_CONCAT(CASE WHEN TIME({$wrappedBioTimeColumn}) BETWEEN '00:00:00' AND '07:29:59' THEN TIME_FORMAT(TIME({$wrappedBioTimeColumn}), '%H:%i:%s') END ORDER BY {$wrappedBioTimeColumn} SEPARATOR ', ') as bracket_1")
+            ->selectRaw("GROUP_CONCAT(CASE WHEN TIME({$wrappedBioTimeColumn}) BETWEEN '07:30:00' AND '09:59:59' THEN TIME_FORMAT(TIME({$wrappedBioTimeColumn}), '%H:%i:%s') END ORDER BY {$wrappedBioTimeColumn} SEPARATOR ', ') as bracket_2")
+            ->selectRaw("GROUP_CONCAT(CASE WHEN TIME({$wrappedBioTimeColumn}) BETWEEN '10:00:00' AND '12:29:59' THEN TIME_FORMAT(TIME({$wrappedBioTimeColumn}), '%H:%i:%s') END ORDER BY {$wrappedBioTimeColumn} SEPARATOR ', ') as bracket_3")
+            ->selectRaw("GROUP_CONCAT(CASE WHEN TIME({$wrappedBioTimeColumn}) BETWEEN '12:30:00' AND '14:59:59' THEN TIME_FORMAT(TIME({$wrappedBioTimeColumn}), '%H:%i:%s') END ORDER BY {$wrappedBioTimeColumn} SEPARATOR ', ') as bracket_4")
+            ->selectRaw("GROUP_CONCAT(CASE WHEN TIME({$wrappedBioTimeColumn}) BETWEEN '15:00:00' AND '17:29:59' THEN TIME_FORMAT(TIME({$wrappedBioTimeColumn}), '%H:%i:%s') END ORDER BY {$wrappedBioTimeColumn} SEPARATOR ', ') as bracket_5")
+            ->selectRaw("GROUP_CONCAT(CASE WHEN TIME({$wrappedBioTimeColumn}) BETWEEN '17:30:00' AND '23:59:59' THEN TIME_FORMAT(TIME({$wrappedBioTimeColumn}), '%H:%i:%s') END ORDER BY {$wrappedBioTimeColumn} SEPARATOR ', ') as bracket_6")
             ->where($joidnumColumn, $joidnum)
-            ->whereBetween($dateTimeColumn, [$start->toDateTimeString(), $end->toDateTimeString()])
-            ->groupByRaw("DAY({$wrappedDateTimeColumn})")
-            ->orderByRaw("DAY({$wrappedDateTimeColumn})")
+            ->whereBetween($bioDateColumn, [$start->toDateString(), $end->toDateString()])
+            ->groupByRaw("DAY({$wrappedBioDateColumn})")
+            ->orderByRaw("DAY({$wrappedBioDateColumn})")
             ->get()
             ->keyBy('day');
 
