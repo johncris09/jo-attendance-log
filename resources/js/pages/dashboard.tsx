@@ -103,6 +103,7 @@ export default function Dashboard() {
     );
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const hasAttendanceRows = (attendance?.data.length ?? 0) > 0;
 
     const yearOptions = Array.from(
         { length: 6 },
@@ -111,8 +112,10 @@ export default function Dashboard() {
 
     useEffect(() => {
         const controller = new AbortController();
+        const minimumSkeletonMs = 400;
 
         const loadAttendance = async () => {
+            const loadStartedAt = Date.now();
             setIsLoading(true);
             setError(null);
 
@@ -143,7 +146,18 @@ export default function Dashboard() {
 
                 setError('Unable to load attendance logs right now.');
             } finally {
-                setIsLoading(false);
+                const elapsed = Date.now() - loadStartedAt;
+                const remaining = Math.max(0, minimumSkeletonMs - elapsed);
+
+                if (remaining > 0) {
+                    await new Promise<void>((resolve) => {
+                        setTimeout(resolve, remaining);
+                    });
+                }
+
+                if (!controller.signal.aborted) {
+                    setIsLoading(false);
+                }
             }
         };
 
@@ -217,13 +231,22 @@ export default function Dashboard() {
                         </div>
                     </div>
 
-                    {isLoading && <AttendanceTableSkeleton />}
+                    {(isLoading || (!attendance && !error)) && (
+                        <AttendanceTableSkeleton />
+                    )}
 
                     {!isLoading && error && (
                         <p className="text-sm text-destructive">{error}</p>
                     )}
 
-                    {!isLoading && !error && attendance && (
+                    {!isLoading && !error && attendance && !hasAttendanceRows && (
+                        <p className="text-sm text-muted-foreground">
+                            No attendance logs found for the selected month and
+                            year.
+                        </p>
+                    )}
+
+                    {!isLoading && !error && attendance && hasAttendanceRows && (
                         <div className="overflow-x-auto">
                             <table className="w-full min-w-230 border-collapse text-sm">
                                 <thead>
