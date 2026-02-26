@@ -8,9 +8,9 @@ class Employee extends Authenticatable
 {
     protected $connection = 'payment_connection';
 
-    protected $table = 'payments';
+    protected $table = 'joc';
 
-     /**
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
