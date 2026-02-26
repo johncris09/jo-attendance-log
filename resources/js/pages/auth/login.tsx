@@ -16,15 +16,13 @@ export const metadata = {
     title: 'Login - Job Order Attendance Log',
     description: 'Secure login for Job Order Attendance Log management system',
 };
+
 type Props = {
     canResetPassword: boolean;
     canRegister: boolean;
 };
 
-export default function Login({
-    canResetPassword,
-    canRegister,
-}: Props) {
+export default function Login({ canResetPassword, canRegister }: Props) {
     const [showPassword, setShowPassword] = useState(false);
 
     const features = [
@@ -36,11 +34,19 @@ export default function Login({
 
     return (
         <div className="flex min-h-screen bg-background">
-            <div className="relative hidden flex-col justify-between overflow-hidden bg-linear-to-br from-primary via-accent to-secondary p-12 text-primary-foreground lg:flex lg:w-1/2">
-                {/* Decorative elements */}
-                <div className="absolute top-0 right-0 -mt-48 -mr-48 h-96 w-96 rounded-full bg-primary-foreground/10 blur-3xl" />
-                <div className="absolute bottom-0 left-0 -mb-40 -ml-40 h-80 w-80 rounded-full bg-primary-foreground/10 blur-3xl" />
+            {/* ── Left panel ── */}
+            <div className="relative hidden overflow-hidden lg:flex lg:w-1/2 flex-col justify-between p-12
+                            bg-gradient-to-br from-blue-700 via-blue-600 to-blue-400
+                            dark:from-sidebar dark:via-sidebar/90 dark:to-sidebar-accent
+                            text-primary-foreground dark:text-sidebar-foreground">
 
+                {/* Decorative blobs */}
+                {/* <div className="pointer-events-none absolute -top-48 -right-48 h-96 w-96 rounded-full
+                                bg-white/10 blur-3xl" />
+                <div className="pointer-events-none absolute -bottom-40 -left-40 h-80 w-80 rounded-full
+                                bg-white/10 blur-3xl" /> */}
+
+                {/* Brand */}
                 <div className="relative z-10">
                     <div className="mb-12 flex items-center gap-3">
                         <div className="flex h-10 w-10 items-center justify-center rounded-lg">
@@ -52,41 +58,36 @@ export default function Login({
                         </div>
                         <div>
                             <h1 className="text-2xl font-bold">JO Attendance Log</h1>
-                            <p className="text-sm text-primary-foreground/80">
-                                Attendance Management
-                            </p>
+                            <p className="text-sm opacity-75">Attendance Management</p>
                         </div>
                     </div>
 
                     <div className="max-w-sm">
-                        <h2 className="mb-6 text-5xl leading-tight font-bold text-balance">
+                        <h2 className="mb-6 text-5xl font-bold leading-tight text-balance">
                             Streamline Your Workforce Management
                         </h2>
-                        <p className="mb-8 text-lg leading-relaxed text-primary-foreground/90">
-                            Efficient job order tracking and attendance logging
-                            for modern teams. Simplify payroll, improve
-                            accountability, and boost productivity.
+                        <p className="mb-8 text-lg leading-relaxed opacity-90">
+                            Efficient job order tracking and attendance logging for modern
+                            teams. Simplify payroll, improve accountability, and boost
+                            productivity.
                         </p>
 
                         <div className="space-y-4">
                             {features.map((feature, index) => (
-                                <div
-                                    key={index}
-                                    className="flex items-center gap-3"
-                                >
+                                <div key={index} className="flex items-center gap-3">
                                     <CheckCircle className="h-5 w-5 shrink-0" />
-                                    <span className="text-primary-foreground/90">
-                                        {feature}
-                                    </span>
+                                    <span className="opacity-90">{feature}</span>
                                 </div>
                             ))}
                         </div>
                     </div>
                 </div>
             </div>
+
+            {/* ── Right panel ── */}
             <div className="flex w-full flex-col items-center justify-center bg-background p-6 md:p-12 lg:w-1/2">
                 <div className="w-full max-w-md">
-                    {/* Mobile Logo */}
+                    {/* Mobile logo */}
                     <div className="mb-8 flex items-center gap-3 lg:hidden">
                         <div className="flex h-10 w-10 items-center justify-center rounded-lg">
                             <img
@@ -125,9 +126,7 @@ export default function Login({
                                     <>
                                         <div className="grid gap-6">
                                             <div className="grid gap-2">
-                                                <Label htmlFor="joidnum">
-                                                    JO ID Number
-                                                </Label>
+                                                <Label htmlFor="joidnum">JO ID Number</Label>
                                                 <Input
                                                     id="joidnum"
                                                     type="text"
@@ -138,16 +137,12 @@ export default function Login({
                                                     autoComplete="username"
                                                     placeholder="JO ID Number"
                                                 />
-                                                <InputError
-                                                    message={errors.joidnum}
-                                                />
+                                                <InputError message={errors.joidnum} />
                                             </div>
 
                                             <div className="grid gap-2">
                                                 <div className="flex items-center">
-                                                    <Label htmlFor="password">
-                                                        Password
-                                                    </Label>
+                                                    <Label htmlFor="password">Password</Label>
                                                     {canResetPassword && (
                                                         <TextLink
                                                             href="/forgot-password"
@@ -171,15 +166,10 @@ export default function Login({
                                                     />
                                                     <button
                                                         type="button"
-                                                        onClick={() =>
-                                                            setShowPassword((value) => !value)
-                                                        }
-                                                        className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2"
-                                                        aria-label={
-                                                            showPassword
-                                                                ? 'Hide password'
-                                                                : 'Show password'
-                                                        }
+                                                        onClick={() => setShowPassword((v) => !v)}
+                                                        className="absolute top-1/2 right-3 -translate-y-1/2
+                                                                   text-muted-foreground hover:text-foreground"
+                                                        aria-label={showPassword ? 'Hide password' : 'Show password'}
                                                         tabIndex={-1}
                                                     >
                                                         {showPassword ? (
@@ -189,20 +179,12 @@ export default function Login({
                                                         )}
                                                     </button>
                                                 </div>
-                                                <InputError
-                                                    message={errors.password}
-                                                />
+                                                <InputError message={errors.password} />
                                             </div>
 
                                             <div className="flex items-center space-x-3">
-                                                <Checkbox
-                                                    id="remember"
-                                                    name="remember"
-                                                    tabIndex={3}
-                                                />
-                                                <Label htmlFor="remember">
-                                                    Remember me
-                                                </Label>
+                                                <Checkbox id="remember" name="remember" tabIndex={3} />
+                                                <Label htmlFor="remember">Remember me</Label>
                                             </div>
 
                                             <Button
@@ -220,10 +202,7 @@ export default function Login({
                                         {canRegister && (
                                             <div className="text-center text-sm text-muted-foreground">
                                                 Don't have an account?{' '}
-                                                <TextLink
-                                                    href="/register"
-                                                    tabIndex={5}
-                                                >
+                                                <TextLink href="/register" tabIndex={5}>
                                                     Sign up
                                                 </TextLink>
                                             </div>
@@ -234,13 +213,9 @@ export default function Login({
                         </div>
                     </Card>
 
-                    {/* Security Info */}
+                    {/* Security badge */}
                     <div className="mt-6 flex items-center justify-center gap-2 text-xs text-muted-foreground">
-                        <svg
-                            className="h-4 w-4"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                        >
+                        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
                             <path
                                 fillRule="evenodd"
                                 d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
