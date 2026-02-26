@@ -255,9 +255,23 @@ export default function Dashboard() {
                                     {attendance.data.map((row) => (
                                         <tr
                                             key={row.day}
-                                            className="border-b text-center last:border-0"
+                                            className={`border-b text-center last:border-0 ${
+                                                ['saturday', 'sunday'].includes(
+                                                    row.day_name.toLowerCase(),
+                                                )
+                                                    ? 'bg-muted/40'
+                                                    : ''
+                                            }`}
                                         >
-                                            <td className="px-3 py-2 text-left">
+                                            <td
+                                                className={`px-3 py-2 text-left ${
+                                                    ['saturday', 'sunday'].includes(
+                                                        row.day_name.toLowerCase(),
+                                                    )
+                                                        ? 'font-semibold'
+                                                        : ''
+                                                }`}
+                                            >
                                                 {row.day} | {row.day_name}
                                             </td>
                                             <td className="px-3 py-2">
