@@ -23,6 +23,9 @@ class Employee extends Authenticatable
      */
 
     protected $fillable = [
+        'lastname',
+        'firstname',
+        'middlename',
         'JOIDNUM',
         'password',
     ];
