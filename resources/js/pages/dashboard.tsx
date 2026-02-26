@@ -164,7 +164,7 @@ export default function Dashboard() {
                         <div className="overflow-x-auto">
                             <table className="w-full min-w-230 border-collapse text-sm">
                                 <thead>
-                                    <tr className="border-b text-left">
+                                    <tr className="border-b text-center">
                                         <th className="px-3 py-2 font-medium">Day</th>
                                         <th className="px-3 py-2 font-medium">00:00 - 07:29</th>
                                         <th className="px-3 py-2 font-medium">07:30 - 09:59</th>
@@ -176,14 +176,14 @@ export default function Dashboard() {
                                 </thead>
                                 <tbody>
                                     {attendance.data.map((row) => (
-                                        <tr key={row.day} className="border-b last:border-0">
+                                        <tr key={row.day} className="border-b last:border-0 text-center">
                                             <td className="px-3 py-2">{row.day}</td>
-                                            <td className="px-3 py-2">{row.bracket_1 || '-'}</td>
-                                            <td className="px-3 py-2">{row.bracket_2 || '-'}</td>
-                                            <td className="px-3 py-2">{row.bracket_3 || '-'}</td>
-                                            <td className="px-3 py-2">{row.bracket_4 || '-'}</td>
-                                            <td className="px-3 py-2">{row.bracket_5 || '-'}</td>
-                                            <td className="px-3 py-2">{row.bracket_6 || '-'}</td>
+                                            <td className="px-3 py-2">{row.bracket_1 || ''}</td>
+                                            <td className="px-3 py-2">{row.bracket_2 || ''}</td>
+                                            <td className="px-3 py-2">{row.bracket_3 || ''}</td>
+                                            <td className="px-3 py-2">{row.bracket_4 || ''}</td>
+                                            <td className="px-3 py-2">{row.bracket_5 || ''}</td>
+                                            <td className="px-3 py-2">{row.bracket_6 || ''}</td>
                                         </tr>
                                     ))}
                                 </tbody>
