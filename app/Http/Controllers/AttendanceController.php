@@ -63,7 +63,7 @@ class AttendanceController extends Controller
             ->values()
             ->all();
 
-        $joidnumColumn = collect(['id_number','JOIDNUM', 'joidnum', 'employee_id', 'EmployeeID'])->first(
+        $joidnumColumn = collect(['id_number', 'JOIDNUM', 'joidnum', 'employee_id', 'EmployeeID'])->first(
             fn(string $column) => in_array($column, $columns, true)
         );
 
@@ -114,6 +114,7 @@ class AttendanceController extends Controller
 
             $data[] = [
                 'day' => $day,
+                'day_name' => Carbon::create($year, $month, $day)->format('l'),
                 'bracket_1' => (string) ($row->bracket_1 ?? ''),
                 'bracket_2' => (string) ($row->bracket_2 ?? ''),
                 'bracket_3' => (string) ($row->bracket_3 ?? ''),

@@ -21,6 +21,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 type AttendanceRow = {
     day: number;
+    day_name: string;
     bracket_1: string;
     bracket_2: string;
     bracket_3: string;
@@ -157,7 +158,9 @@ export default function Dashboard() {
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <div className="rounded-lg bg-linear-to-r from-blue-500 to-blue-600 p-6 text-white shadow-lg">
-                    <h1 className="mb-2 text-3xl font-bold">Welcome back {auth?.user?.FirstName}!</h1>
+                    <h1 className="mb-2 text-3xl font-bold">
+                        Welcome back {auth?.user?.FirstName}!
+                    </h1>
                     <p className="text-blue-100">
                         Here's an overview of your attendance records.
                     </p>
@@ -254,8 +257,8 @@ export default function Dashboard() {
                                             key={row.day}
                                             className="border-b text-center last:border-0"
                                         >
-                                            <td className="px-3 py-2">
-                                                {row.day}
+                                            <td className="px-3 py-2 text-left">
+                                                {row.day} | {row.day_name}
                                             </td>
                                             <td className="px-3 py-2">
                                                 {row.bracket_1 || ''}
