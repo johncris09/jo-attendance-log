@@ -1,0 +1,119 @@
+name: 🚀 Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # -------------------------
+      # Checkout
+      # -------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # -------------------------
+      # Setup PHP
+      # -------------------------
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: mbstring, bcmath, pdo, mysql
+
+      # -------------------------
+      # Composer install (build only)
+      # -------------------------
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader
+
+      # -------------------------
+      # Setup Node
+      # -------------------------
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      # -------------------------
+      # Install NPM deps
+      # -------------------------
+      - name: Install NPM dependencies
+        run: npm ci
+
+      # -------------------------
+      # Build Vite assets
+      # -------------------------
+      - name: Build Vite assets
+        run: npm run build
+
+      # -------------------------
+      # Prepare deployment package
+      # -------------------------
+      - name: Prepare deployment package
+        run: |
+          mkdir -p deployment-package
+
+          rsync -av \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='node_modules' \
+            --exclude='.env' \
+            --exclude='tests' \
+            --exclude='*.log' \
+            --exclude='*.md' \
+            --exclude='vendor' \
+            . deployment-package/
+
+      # -------------------------
+      # Verify package
+      # -------------------------
+      - name: Verify deployment package
+        run: ls -la deployment-package
+
+      # -------------------------
+      # Upload artifact
+      # -------------------------
+      - name: Upload deployment package
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-package
+          path: deployment-package/
+          retention-days: 1
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    timeout-minutes: 30
+
+    steps:
+      # -------------------------
+      # Download artifact
+      # -------------------------
+      - name: Download deployment package
+        uses: actions/download-artifact@v4
+        with:
+          name: deployment-package
+          path: deployment-package
+
+      # -------------------------
+      # Deploy via FTP
+      # -------------------------
+      - name: Deploy to Production (Hostinger)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ./../domains/asenso-oroquieta.com/public_html/joattendance/
+          local-dir: deployment-package/
+          protocol: ftp
+          port: 21
+          timeout: 300000
+          state-name: ftp-deploy-production-state.json
+          log-level: verbose
+          dangerous-clean-slate: false
