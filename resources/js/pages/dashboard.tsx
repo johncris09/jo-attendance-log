@@ -106,8 +106,8 @@ export default function Dashboard() {
     const hasAttendanceRows = (attendance?.data.length ?? 0) > 0;
 
     const yearOptions = Array.from(
-        { length: 6 },
-        (_, index) => today.getFullYear() - 2 + index,
+        { length: today.getFullYear() - 2024 + 1 },
+        (_, index) => today.getFullYear() - index,
     );
 
     useEffect(() => {
