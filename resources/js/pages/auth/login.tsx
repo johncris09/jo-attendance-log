@@ -52,7 +52,7 @@ export default function Login({ canResetPassword, canRegister }: Props) {
                         <div className="flex h-10 w-10 items-center justify-center rounded-lg">
                             <img
                                 src={logo}
-                                alt="BRGY CSM Logo"
+                                alt="Oroquieta Logo"
                                 className="size-10 rounded-md object-cover"
                             />
                         </div>
@@ -92,7 +92,7 @@ export default function Login({ canResetPassword, canRegister }: Props) {
                         <div className="flex h-10 w-10 items-center justify-center rounded-lg">
                             <img
                                 src={logo}
-                                alt="BRGY CSM Logo"
+                                alt="Oroquieta Logo"
                                 className="size-10 rounded-md object-cover"
                             />
                         </div>

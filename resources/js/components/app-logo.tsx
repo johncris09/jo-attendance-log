@@ -5,7 +5,7 @@ export default function AppLogo() {
             <div className="flex aspect-square size-8 items-center justify-center rounded-md   text-sidebar-primary-foreground">
                 <img
                     src={logo}
-                    alt="BRGY CSM Logo"
+                    alt="Oroquieta Logo"
                     className="size-7 rounded-md object-cover"
                 />
             </div>
