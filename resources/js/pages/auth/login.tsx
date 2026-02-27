@@ -26,10 +26,10 @@ export default function Login({ canResetPassword, canRegister }: Props) {
     const [showPassword, setShowPassword] = useState(false);
 
     const features = [
-        'Real-time attendance tracking',
-        'Secure job order management',
-        'Comprehensive reporting',
-        'Team collaboration tools',
+        'Daily time-in and time-out logging',
+        'Job order employee records management',
+        'Attendance summaries and history',
+        'Secure access for authorized staff',
     ];
 
     return (
@@ -64,12 +64,12 @@ export default function Login({ canResetPassword, canRegister }: Props) {
 
                     <div className="max-w-sm">
                         <h2 className="mb-6 text-5xl font-bold leading-tight text-balance">
-                            Streamline Your Workforce Management
+                            Manage Job Order Attendance with Confidence
                         </h2>
                         <p className="mb-8 text-lg leading-relaxed opacity-90">
-                            Efficient job order tracking and attendance logging for modern
-                            teams. Simplify payroll, improve accountability, and boost
-                            productivity.
+                            Monitor daily attendance, maintain employee job order records,
+                            and keep attendance history organized in one secure platform
+                            for your LGU team.
                         </p>
 
                         <div className="space-y-4">
