@@ -182,10 +182,10 @@ export default function Login({ canResetPassword, canRegister }: Props) {
                                                 <InputError message={errors.password} />
                                             </div>
 
-                                            <div className="flex items-center space-x-3">
+                                            {/* <div className="flex items-center space-x-3">
                                                 <Checkbox id="remember" name="remember" tabIndex={3} />
                                                 <Label htmlFor="remember">Remember me</Label>
-                                            </div>
+                                            </div> */}
 
                                             <Button
                                                 type="submit"
