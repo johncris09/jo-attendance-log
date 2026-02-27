@@ -196,7 +196,11 @@ export default function Dashboard() {
                                 <SelectTrigger className="w-40">
                                     <SelectValue placeholder="Month" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent
+                                    side="bottom"
+                                    sideOffset={6}
+                                    avoidCollisions={false}
+                                >
                                     {monthOptions.map((month) => (
                                         <SelectItem
                                             key={month.value}
